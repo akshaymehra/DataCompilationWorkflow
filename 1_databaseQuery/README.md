@@ -1,0 +1,1 @@
+This directory is meant to store .SQL queries designed for a local instance of the SGP. As of the date of publication, [a dedicated website](http://sgp-search.io/search) (including a graphical user interface) exists to query and download data from the SGP.
