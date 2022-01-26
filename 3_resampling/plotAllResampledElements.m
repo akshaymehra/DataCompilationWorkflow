@@ -2,7 +2,7 @@ function plotAllResampledElements(originalDataset, resampledAndBinned, elementsS
     bMin, bMax, nBins, outputDirectory)
     % Here, we make plots
     % Load up some events and ages
-    load('0_data_files/lipsTiming.mat', 'lipsTiming');
+    load('0_data_files\lipsTiming.mat', 'lipsTiming');
     load('0_data_files\supercontinentsTiming.mat', 'supercontinents');
     load('0_data_files\iceAgesTiming.mat', 'iceAges');
     % For each chosen element (excluding age)

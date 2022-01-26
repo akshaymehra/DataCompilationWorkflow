@@ -72,8 +72,8 @@ function updatedDataset = BtestForUSGS(dataCSV, propertiesToTest, ...
         colormap('gray')
         pie(categorical(thisHadProperty));
         pbaspect([1,1,1]);
-        title(strcat('Samples with the property ', thisProperty ,...
-            '; n = ', {' '}, num2str(numUSGSSamples)), 'Interpreter', 'none');
+        title(['Samples with the property ', thisProperty ,...
+            '; n = ', {' '}, num2str(numUSGSSamples)], 'Interpreter', 'none');
     end
     % Now, update the database
     % What are the row numbers to delete?

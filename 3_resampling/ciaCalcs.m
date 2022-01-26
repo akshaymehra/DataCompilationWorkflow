@@ -5,7 +5,7 @@ function resampledData = ciaCalcs(resampledData, elementsStruct)
     % Some intermediate values
     % Not fully DRY!
     % ciaCalcs just strings together a set of calls to CaOCalcs and CIA and WIP
-    [CaOStar, CaOStarApprox] = CaOCalcs(resampledData(:, elementsMap("Na2O")), ...
+    [CaOStar, CaOStarApprox, CaOStarHybrid] = CaOCalcs(resampledData(:, elementsMap("Na2O")), ...
         resampledData(:, elementsMap("TIC")), ...
         resampledData(:, elementsMap("CaO")), ...
         resampledData(:, elementsMap("P2O5")));
@@ -13,6 +13,8 @@ function resampledData = ciaCalcs(resampledData, elementsStruct)
     resampledData(:, elementsMap("CaOStar")) = CaOStar;
     % Approximate silicate CaO
     resampledData(:, elementsMap("CaOStarApprox")) = CaOStarApprox;
+    % Hybrid CaO
+    resampledData(:, elementsMap("CaOStarHybrid")) = CaOStarHybrid;
     % Calculated variables...stored in the dataset
     resampledData(:, elementsMap("CIAUncorr")) = ...
         calculateCIA(resampledData(:, elementsMap("Al2O3")), resampledData(:, elementsMap("CaO")), resampledData(:, elementsMap("Na2O")), resampledData(:, elementsMap("K2O")));
@@ -20,6 +22,8 @@ function resampledData = ciaCalcs(resampledData, elementsStruct)
         calculateCIA(resampledData(:, elementsMap("Al2O3")), resampledData(:, elementsMap("CaOStar")), resampledData(:, elementsMap("Na2O")), resampledData(:, elementsMap("K2O")));
     resampledData(:, elementsMap("CIAStarApprox")) = ...
         calculateCIA(resampledData(:, elementsMap("Al2O3")), resampledData(:, elementsMap("CaOStarApprox")), resampledData(:, elementsMap("Na2O")), resampledData(:, elementsMap("K2O")));
+     resampledData(:, elementsMap("CIAStarHybrid")) = ...
+        calculateCIA(resampledData(:, elementsMap("Al2O3")), resampledData(:, elementsMap("CaOStarHybrid")), resampledData(:, elementsMap("Na2O")), resampledData(:, elementsMap("K2O")));
     resampledData(:, elementsMap("WIP")) = ...
         calculateWIP(resampledData(:, elementsMap("Na2O")), resampledData(:, elementsMap("MgO")), resampledData(:, elementsMap("K2O")), resampledData(:, elementsMap("CaO")));
 end

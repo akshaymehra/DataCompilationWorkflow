@@ -1,4 +1,4 @@
-function resampled = bsresample(dataset, numDraws, probs, errors)
+function [resampled, randomSamples] = bsresample(dataset, numDraws, probs, errors)
     [numSamples, numElements] = size(dataset);
     % Okay, now, let's randomly sample, WITH replacement! 
     % First, which of the samples will we take?

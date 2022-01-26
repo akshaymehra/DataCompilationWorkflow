@@ -28,7 +28,7 @@ function [resampledAndBinned, elementsStruct] = meansStds(dataset, numDraws, num
     % We'll add these columns by modifying elementsMap and then calculating
     % its length
     if ismember("ciaCalcs", runOptions)
-        calcsToAdd = ["CaOStar", "CaOStarApprox", "CIAUncorr", "CIAStar", "CIAStarApprox", "WIP"];
+        calcsToAdd = ["CaOStar", "CaOStarApprox", "CaOStarHybrid", "CIAUncorr", "CIAStar", "CIAStarApprox", "CIAStarHybrid", "WIP"];
         elementsMap = modifyElementsMap(elementsMap, calcsToAdd);
     elseif ismember("ratios", runOptions)
         ratioStrings = generateRatioStrings(elementsStruct);
@@ -39,16 +39,21 @@ function [resampledAndBinned, elementsStruct] = meansStds(dataset, numDraws, num
     binMeans = nan(nBins, numElements, numReplicates);
     % Fold elementsMap back into elementsStruct
     elementsStruct.elementsMap = elementsMap;
-    % Also, if "returnAllResampled" was chosen
+    % Some more things to create 
+    % If "returnAllResampled" was chosen
     if ismember("returnAllResampled", runOptions)
         allResampled = nan(numDraws, numElements, numReplicates);
+    end
+    % If "returnSampleIDs" was chosen
+    if ismember("returnSampleIDs", runOptions)
+        allSampleIDs = nan(numDraws, 1, numReplicates);
     end
     % We want to count how many non nan values are in each bin, per element
     binCounts = zeros(nBins, numElements, numReplicates);
     % Okay, now we resample
     parfor rep = 1:numReplicates
         % Begin by resampling data
-        resampledData = bsresample(dataset, numDraws, ...
+        [resampledData, sampledIDs] = bsresample(dataset, numDraws, ...
             probs, errors);
         % Add to resampledData if necessary
         colsToAdd = numElements - size(resampledData, 2);
@@ -59,10 +64,15 @@ function [resampledAndBinned, elementsStruct] = meansStds(dataset, numDraws, num
         end
         if ismember("ciaCalcs", runOptions)
             resampledData = ciaCalcs(resampledData, elementsStruct);
-        elseif ismember("ratios", runOptions)
+        end
+        if ismember("ratios", runOptions)
             resampledData = ratioCalcs(resampledData, elementsStruct);
-        elseif ismember("returnAllResampled", runOptions)
+        end
+        if ismember("returnAllResampled", runOptions)
             allResampled(:,:,rep) = resampledData;
+        end
+        if ismember("returnSampleIDs", runOptions)
+            allSampleIDs(:,:,rep) = sampledIDs;
         end
         % Great! Let's now calculate some binned means
         % Note that we'll calculate the errors of the means, so there's no
@@ -90,5 +100,8 @@ function [resampledAndBinned, elementsStruct] = meansStds(dataset, numDraws, num
     % If returnAllResampled, include allResampled
     if ismember("returnAllResampled", runOptions)
         resampledAndBinned{end+1} = allResampled;
+    end
+    if ismember("returnSampleIDs", runOptions)
+        resampledAndBinned{end+1} = allSampleIDs;
     end
 end
