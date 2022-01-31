@@ -66,14 +66,11 @@ function weightsStruct = sensitivityWeightsCollector(dataset ,...
     % How many to process?
     numSpace = length(spatialScales);
     numAge = length(ageScales);
-    % Now, create a list of spatial and age scales to use in invweight
+    % Now, create
     allSpatialScales = repmat(spatialScales, 1, numAge);
     allAgeScales = repelem(ageScales, numAge);
-    % Calculate weights for samples 
-    tic
-    allWeights = invWeight(lat, lng, age, 2, ...
-                allSpatialScales, allAgeScales);
-    toc
+    % Get all 
+
     keyboard
 
     

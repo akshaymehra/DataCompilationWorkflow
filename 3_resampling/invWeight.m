@@ -1,15 +1,23 @@
 function weights = invWeight(lat, lon, age, lp, spatialScale, ageScale)
+    % In January 2022, invWeight handles multiple spatial and age scales at
+    % one
+    % Both spatial and age scales should be a 1xm matrix, where each column
+    % corresponds to a single scale value
+    % The size of both spatial and age scales should match
     % Samples to process
     toProcess = length(lat);
+    % Number of scale values
+    numScales = size(spatialScale, 2);
     % A weights collector
-    weights = zeros(toProcess, 1);
+    weights = zeros(toProcess, numScales);
     % Begin by checking if there is lat, lon, or age data
     noData = isnan(lat) | isnan(lon) | isnan(age);
     % For each element, let's calculate weights
-    for sample = 1:toProcess
+    [dataQueue, bar] = startParallelWaitbar(toProcess);
+    parfor sample = 1:toProcess
         if noData(sample)
             % If there's no data, then set this weight to Inf
-            weights(sample) = inf;
+            weights(sample, :) = inf;
         else
             % Otherwise, let's calculate a weight
             % Begin with getting arc lengths
@@ -20,7 +28,9 @@ function weights = invWeight(lat, lon, age, lp, spatialScale, ageScale)
             ageDistances = abs(age(sample) - age);
             ageWeighting = 1 ./ ((ageDistances ./ ageScale).^lp + 1.0);
             % Let's sum the two up
-            weights(sample) = nansum(distanceWeighting + ageWeighting);
+            weights(sample, :) = sum(distanceWeighting + ageWeighting, 1,'omitnan');
         end
+        send(dataQueue, "updated");
     end
+    close(bar);
 end
